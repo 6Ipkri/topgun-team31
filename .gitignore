@@ -1,3 +1,7 @@
+package-lock.json
+
+android/build.gradle
+
 # OSX
 #
 .DS_Store

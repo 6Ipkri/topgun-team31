@@ -27,6 +27,8 @@ export default class App extends Component<{}> {
     pushModalVisible: false,
     latt: 0,
     long: 0,
+    pmHex: null,
+    pmDec: null
   };
 
   setModalVisible(visible) {
@@ -181,23 +183,49 @@ export default class App extends Component<{}> {
       });
   };
 
+  getPm = async () => {
+    fetch('https://top-gun-team31.firebaseio.com/quiz/location/team31/.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        team: 31,
+        latitude: lat,
+        longitude: lng,
+        timestamp: tsp
+      }),
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   render() {
     const { loading, location, updatesEnabled } = this.state;
     return (
       // <ImageBackground source={require('./assets/img/bg_very_good.jpg')} style={styles.backgroundImage}>
       <View style={styles.container}>
+        <Image
+          style={styles.background}
+          source={require('./assets/img/bg_null.png')}>
+        </Image>
         <ScrollView
           style={{ flex: 8 }}
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
 
           <View style={styles.centerContent}>
-            <Text style={styles.pmText}>Please Reload</Text>
+            <Text style={styles.pmText}>Please reload</Text>
           </View>
 
           <View style={styles.centerContent}>
             <Image
               style={{ width: 180, height: 180, marginBottom: 5 }}
-              source={require('./assets/img/good.png')} />
+              source={require('./assets/img/null.png')} />
           </View>
 
           <View style={styles.centerContent}>
@@ -238,7 +266,7 @@ export default class App extends Component<{}> {
           }}>
           <View style={styles.container}>
             <ScrollView
-              style={{padding: 20, }}
+              style={{ padding: 20, }}
               contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
               <View style={styles.modalBg}></View>
               <View style={styles.modalBlock}>
@@ -290,6 +318,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 12,
+  },
+  background: {
+    width: 500,
+    height: 800,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    opacity: 0.5
   },
   modalBg: {
     flex: 1,

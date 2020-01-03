@@ -21,14 +21,18 @@ export default class App extends Component<{}> {
   state = {
     loading: false,
     updatesEnabled: false,
-    location: {},
+    location: 'loading..',
     getFireBase: null,
     modalVisible: false,
     pushModalVisible: false,
     latt: 0,
     long: 0,
-    pmHex: null,
-    pmDec: null
+    pmHex: '??',
+    pmDec: '??',
+    objectLasted: null,
+    pmResult: 'Please reload',
+    bgImageURL: require("./assets/img/bg_null.png"),
+    faceImageURL: require("./assets/img/null.png"),
   };
 
   setModalVisible(visible) {
@@ -139,13 +143,13 @@ export default class App extends Component<{}> {
     fetch('https://top-gun-team31.firebaseio.com/quiz/location/team31/.json')
       .then(response => response.json())
       .then(responseJson => {
-        //  Alert.alert("Author name at 0th index:  " + responseJson);
-        this.setState({ location: responseJson, loading: false });
+        this.setState({location: responseJson, loading: false});
       })
       .catch(error => {
         console.error(error);
       });
   };
+
 
   postLocateFirebase = async () => {
     var coords = this.state.location.coords;
@@ -175,35 +179,88 @@ export default class App extends Component<{}> {
         this.setState({ latt: lat, long: lng });
         this.setPushModalVisible(true);
         // this.getLocateFirebase();
-        //  Alert.alert("Author name at 0th index:  " + responseJson);
-        // this.setState({location: responseJson, loading: false});
       })
       .catch(error => {
         console.error(error);
       });
   };
 
-  getPm = async () => {
-    fetch('https://top-gun-team31.firebaseio.com/quiz/location/team31/.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        team: 31,
-        latitude: lat,
-        longitude: lng,
-        timestamp: tsp
-      }),
-    })
+  getSensorLastedObject = async () => {
+    this.setState({ pmResult: 'Loading..' })
+
+    fetch('https://tgr2020-quiz2.firebaseio.com/quiz/sensor/team33.json')
       .then(response => response.json())
       .then(responseJson => {
+        var last = (last = Object.keys(responseJson))[last.length - 1];
+        console.log("Lasted obj: " + last)
+
+        this.setState({ objectLasted: last, loading: false });
+        this.getPmHex();
 
       })
       .catch(error => {
         console.error(error);
       });
   }
+
+  getPmHex = async () => {
+    fetch('https://tgr2020-quiz2.firebaseio.com/quiz/sensor/team33/' + this.state.objectLasted + '/DevEUI_uplink.json')
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('pm hex: ' + responseJson)
+        this.setState({ pmHex: responseJson.payload_hex });
+        this.convertPmHexToDec()
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  convertPmHexToDec = async () => {
+    var decimal = parseInt(this.state.pmHex, 16);
+    this.setState({ pmDec: decimal});
+    this.criteriaPm();
+  }
+
+  criteriaPm = async () => {
+    if (this.state.pmDec >= 0 && this.state.pmDec <= 25) {
+      this.setState({ 
+        pmResult: 'Very good', 
+        bgImageURL: require("./assets/img/bg_very_good.png"), 
+        faceImageURL: require("./assets/img/very_good.png")
+      })
+    }
+    else if (this.state.pmDec >= 26 && this.state.pmDec <= 50) {
+      this.setState({ 
+        pmResult: 'Good', 
+        bgImageURL: require("./assets/img/bg_good.png"), 
+        faceImageURL: require("./assets/img/good.png")
+      })
+    }
+    else if (this.state.pmDec >= 51 && this.state.pmDec <= 100) {
+      this.setState({ 
+        pmResult: 'Moderate', 
+        bgImageURL: require("./assets/img/bg_moderate.png"), 
+        faceImageURL: require("./assets/img/moderate.png")
+      })
+    }
+    else if (this.state.pmDec >= 101 && this.state.pmDec <= 200) {
+      this.setState({ 
+        pmResult: 'Unhealthy', 
+        bgImageURL: require("./assets/img/bg_unhealthy.png"), 
+        faceImageURL: require("./assets/img/unhealthy.png")
+      })
+    }
+    else if (this.state.pmDec >= 201) {
+      this.setState({ 
+        pmResult: 'Very unhealthy', 
+        bgImageURL: require("./assets/img/bg_very_unhealthy.png"), 
+        faceImageURL: require("./assets/img/very_unhealthy.png")
+      })
+    }
+  
+  }
+
 
   render() {
     const { loading, location, updatesEnabled } = this.state;
@@ -212,30 +269,35 @@ export default class App extends Component<{}> {
       <View style={styles.container}>
         <Image
           style={styles.background}
-          source={require('./assets/img/bg_null.png')}>
+          source={this.state.bgImageURL}>
         </Image>
         <ScrollView
           style={{ flex: 8 }}
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
 
           <View style={styles.centerContent}>
-            <Text style={styles.pmText}>Please reload</Text>
+            <Text style={styles.pmText}>{this.state.pmResult}</Text>
           </View>
 
           <View style={styles.centerContent}>
             <Image
               style={{ width: 180, height: 180, marginBottom: 5 }}
-              source={require('./assets/img/null.png')} />
+              source = {this.state.faceImageURL} />
           </View>
 
           <View style={styles.centerContent}>
-            <Text style={styles.pmValue}>??</Text>
+            <Text style={styles.pmValue}>{this.state.pmDec}</Text>
           </View>
 
           <View style={styles.centerContent}>
-            <Image
-              style={{ width: 20, height: 20, marginTop: 20 }}
-              source={require('./assets/img/reload.png')} />
+            <TouchableHighlight
+              onPress={this.getSensorLastedObject}>
+              <Image
+                style={{ width: 20, height: 20, marginTop: 20 }}
+                source={require('./assets/img/reload.png')}
+              />
+            </TouchableHighlight>
+
           </View>
 
           <View style={styles.button}>
@@ -257,18 +319,15 @@ export default class App extends Component<{}> {
 
         </ScrollView>
 
+        {/*  show database modal */}
         <Modal
           animationType="slide"
           transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
+          visible={this.state.modalVisible}>
           <View style={styles.container}>
             <ScrollView
-              style={{ padding: 20, }}
+              style={{ padding: 10, }}
               contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-              <View style={styles.modalBg}></View>
               <View style={styles.modalBlock}>
                 <TouchableHighlight
                   onPress={() => { this.setModalVisible(!this.state.modalVisible) }}>
@@ -286,6 +345,7 @@ export default class App extends Component<{}> {
 
         </Modal>
 
+        {/* push successful modal */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -410,6 +470,7 @@ const styles = StyleSheet.create({
   pmValue: {
     width: 90,
     height: 50,
+    paddingTop: 4,
     color: '#707070',
     textAlign: 'center',
     fontSize: 30,

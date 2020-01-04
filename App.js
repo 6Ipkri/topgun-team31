@@ -197,7 +197,7 @@ export default class App extends Component<{}> {
           <View style={styles.centerContent}>
             <Image
               style={{ width: 180, height: 180, marginBottom: 5 }}
-              source={require('./assets/img/good.png')} />
+              source={require('/assets/img/good.png')} />
           </View>
 
           <View style={styles.centerContent}>

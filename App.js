@@ -169,7 +169,7 @@ export default class App extends Component<{}> {
     var tsp = d.toISOString();
     tsp = tsp.replace('Z', `+${tzo}:00`);
 
-    fetch('https://top-gun-team31.firebaseio.com/quiz/location/team31/.json', {
+    fetch('https://tgr2020-quiz2.firebaseio.com/quiz/location/team33.json', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

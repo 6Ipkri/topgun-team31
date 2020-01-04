@@ -24,6 +24,7 @@ export default class App extends Component<{}> {
     location: 'loading..',
     getFireBase: null,
     modalVisible: false,
+    garanteeModelVisible: false,
     pushModalVisible: false,
     latt: 0,
     long: 0,
@@ -41,6 +42,10 @@ export default class App extends Component<{}> {
 
   setPushModalVisible(visible) {
     this.setState({ pushModalVisible: visible });
+  }
+
+  setGaranteeModalVisible(visible) {
+    this.setState({ garanteeModelVisible: visible });
   }
 
   hasLocationPermission = async () => {
@@ -79,6 +84,8 @@ export default class App extends Component<{}> {
   };
 
   getLocation = async () => {
+    this.setGaranteeModalVisible(!this.state.garanteeModelVisible)
+
     const hasLocationPermission = await this.hasLocationPermission();
 
     if (!hasLocationPermission) return;
@@ -143,7 +150,7 @@ export default class App extends Component<{}> {
     fetch('https://top-gun-team31.firebaseio.com/quiz/location/team31/.json')
       .then(response => response.json())
       .then(responseJson => {
-        this.setState({location: responseJson, loading: false});
+        this.setState({ location: responseJson, loading: false });
       })
       .catch(error => {
         console.error(error);
@@ -218,47 +225,51 @@ export default class App extends Component<{}> {
 
   convertPmHexToDec = async () => {
     var decimal = parseInt(this.state.pmHex, 16);
-    this.setState({ pmDec: decimal});
+    this.setState({ pmDec: decimal });
     this.criteriaPm();
   }
 
   criteriaPm = async () => {
     if (this.state.pmDec >= 0 && this.state.pmDec <= 25) {
-      this.setState({ 
-        pmResult: 'Very good', 
-        bgImageURL: require("./assets/img/bg_very_good.png"), 
+      this.setState({
+        pmResult: 'Very good',
+        bgImageURL: require("./assets/img/bg_very_good.png"),
         faceImageURL: require("./assets/img/very_good.png")
       })
     }
     else if (this.state.pmDec >= 26 && this.state.pmDec <= 50) {
-      this.setState({ 
-        pmResult: 'Good', 
-        bgImageURL: require("./assets/img/bg_good.png"), 
+      this.setState({
+        pmResult: 'Good',
+        bgImageURL: require("./assets/img/bg_good.png"),
         faceImageURL: require("./assets/img/good.png")
       })
     }
     else if (this.state.pmDec >= 51 && this.state.pmDec <= 100) {
-      this.setState({ 
-        pmResult: 'Moderate', 
-        bgImageURL: require("./assets/img/bg_moderate.png"), 
+      this.setState({
+        pmResult: 'Moderate',
+        bgImageURL: require("./assets/img/bg_moderate.png"),
         faceImageURL: require("./assets/img/moderate.png")
       })
     }
     else if (this.state.pmDec >= 101 && this.state.pmDec <= 200) {
-      this.setState({ 
-        pmResult: 'Unhealthy', 
-        bgImageURL: require("./assets/img/bg_unhealthy.png"), 
+      this.setState({
+        pmResult: 'Unhealthy',
+        bgImageURL: require("./assets/img/bg_unhealthy.png"),
         faceImageURL: require("./assets/img/unhealthy.png")
       })
     }
     else if (this.state.pmDec >= 201) {
-      this.setState({ 
-        pmResult: 'Very unhealthy', 
-        bgImageURL: require("./assets/img/bg_very_unhealthy.png"), 
+      this.setState({
+        pmResult: 'Very unhealthy',
+        bgImageURL: require("./assets/img/bg_very_unhealthy.png"),
         faceImageURL: require("./assets/img/very_unhealthy.png")
       })
     }
-  
+
+  }
+
+  garanteeModal = () => {
+    this.setGaranteeModalVisible(true);
   }
 
 
@@ -282,7 +293,7 @@ export default class App extends Component<{}> {
           <View style={styles.centerContent}>
             <Image
               style={{ width: 180, height: 180, marginBottom: 5 }}
-              source = {this.state.faceImageURL} />
+              source={this.state.faceImageURL} />
           </View>
 
           <View style={styles.centerContent}>
@@ -310,8 +321,7 @@ export default class App extends Component<{}> {
 
             <TouchableHighlight
               style={styles.buttonItemY}
-              onPress={() => this.getLocation()}
-              // onPress={() => this.setPushModalVisible(true)}
+              onPress={() => this.garanteeModal()}
               underlayColor='#fff'>
               <Text style={styles.buttonText}>push location</Text>
             </TouchableHighlight>
@@ -343,6 +353,34 @@ export default class App extends Component<{}> {
             </ScrollView>
           </View>
 
+        </Modal>
+
+
+        {/* garantee modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.garanteeModelVisible}>
+          <View style={styles.container}>
+            <View style={styles.modalBg}></View>
+            <View style={styles.modalBlock}>
+              <Text style={{ fontSize: 20, paddingHorizontal: 20, paddingBottom: 20, fontWeight: 'bold', marginTop: 20, color: '#707070' }}>Do you want to push location to database?</Text>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableHighlight
+                  style={styles.buttonItemG}
+                  onPress={() => this.getLocation()}>
+                  <Text style={styles.buttonText}>YES</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={styles.buttonItemG}
+                  onPress={() => { this.setGaranteeModalVisible(!this.state.garanteeModelVisible) }}>
+                  <Text style={styles.buttonText}>NO</Text>
+                </TouchableHighlight>
+              </View>
+
+            </View>
+          </View>
         </Modal>
 
         {/* push successful modal */}
@@ -390,10 +428,19 @@ const styles = StyleSheet.create({
     opacity: 0.5
   },
   modalBg: {
-    flex: 1,
-    alignSelf: 'stretch',
-    width: null,
-    height: null,
+    // flex: 1,
+    // alignSelf: 'stretch',
+    // width: null,
+    // height: null,
+    // backgroundColor: '#FFFFFF',
+    // opacity: 0.7,
+    width: 500,
+    height: 800,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
     backgroundColor: '#FFFFFF',
     opacity: 0.7,
   },
@@ -485,37 +532,3 @@ const styles = StyleSheet.create({
     fontSize: 23,
   },
 });
-
-//  export default App;
-
-
-
-
-/ old version /
-// {/* <View style={styles.container}>
-//   <ScrollView>
-//     {/* <Button
-//             title="Get Location"
-//             onPress={this.getLocation}
-//             disabled={loading || updatesEnabled}
-//           /> */}
-//     <View style={styles.buttons}>
-//       <Button
-//         title="Post Firebase"
-//         onPress={() => this.getLocation()}
-//         disabled={loading || updatesEnabled}
-//       />
-//       <Button title="Get Firebase" onPress={this.getLocateFirebase} />
-//     </View>
-//     {/* <View style={styles.buttons}>
-//           <Button
-//             title="Start Observing"
-//             onPress={this.getLocationUpdates}
-//             disabled={updatesEnabled}
-//           />
-//           <Button
-//             title="Stop Observing"
-//             onPress={this.removeLocationUpdates}
-//             disabled={!updatesEnabled}
-//           />
-//         </View> */} */}

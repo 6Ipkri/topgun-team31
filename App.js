@@ -32,8 +32,8 @@ export default class App extends Component<{}> {
     pmDec: '??',
     objectLasted: null,
     pmResult: 'Please reload',
-    bgImageURL: require("./assets/img/bg_null.png"),
-    faceImageURL: require("./assets/img/null.png"),
+    bgImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/bg_null.png"},
+    faceImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/null.png"},
   };
 
   setModalVisible(visible) {
@@ -233,36 +233,36 @@ export default class App extends Component<{}> {
     if (this.state.pmDec >= 0 && this.state.pmDec <= 25) {
       this.setState({
         pmResult: 'Very good',
-        bgImageURL: require("./assets/img/bg_very_good.png"),
-        faceImageURL: require("./assets/img/very_good.png")
+        bgImageURL:  {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/bg_very_good.png"},
+        faceImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/very_good.png"}
       })
     }
     else if (this.state.pmDec >= 26 && this.state.pmDec <= 50) {
       this.setState({
         pmResult: 'Good',
-        bgImageURL: require("./assets/img/bg_good.png"),
-        faceImageURL: require("./assets/img/good.png")
+        bgImageURL: {uri: "https://topgun.s3-ap-southeast-1.amazonaws.com/bg_good.png"},
+        faceImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/good.png"}
       })
     }
     else if (this.state.pmDec >= 51 && this.state.pmDec <= 100) {
       this.setState({
         pmResult: 'Moderate',
-        bgImageURL: require("./assets/img/bg_moderate.png"),
-        faceImageURL: require("./assets/img/moderate.png")
+        bgImageURL: {uri: "https://topgun.s3-ap-southeast-1.amazonaws.com/bg_moderate.png"},
+        faceImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/moderate.png"}
       })
     }
     else if (this.state.pmDec >= 101 && this.state.pmDec <= 200) {
       this.setState({
         pmResult: 'Unhealthy',
-        bgImageURL: require("./assets/img/bg_unhealthy.png"),
-        faceImageURL: require("./assets/img/unhealthy.png")
+        bgImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/bg_unhealthy.png"},
+        faceImageURL:{uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/unhealthy.png"}
       })
     }
     else if (this.state.pmDec >= 201) {
       this.setState({
         pmResult: 'Very unhealthy',
-        bgImageURL: require("./assets/img/bg_very_unhealthy.png"),
-        faceImageURL: require("./assets/img/very_unhealthy.png")
+        bgImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/bg_very_unhealthy.png"},
+        faceImageURL: {uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/very_unhealthy.png"}
       })
     }
 
@@ -305,7 +305,7 @@ export default class App extends Component<{}> {
               onPress={this.getSensorLastedObject}>
               <Image
                 style={{ width: 20, height: 20, marginTop: 20 }}
-                source={require('./assets/img/reload.png')}
+                source={{uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/reload.png"}}
               />
             </TouchableHighlight>
 
@@ -344,7 +344,7 @@ export default class App extends Component<{}> {
                   <View style={{ flexDirection: 'row-reverse' }}>
                     <Image
                       style={{ width: 20, height: 20, marginTop: 20, marginRight: 20 }}
-                      source={require('./assets/img/cancel.png')} />
+                      source={{uri:"https://topgun.s3-ap-southeast-1.amazonaws.com/cancel.png"}} />
                   </View>
                 </TouchableHighlight>
 

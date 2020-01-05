@@ -215,7 +215,10 @@ export default class App extends Component<{}> {
       .then(response => response.json())
       .then(responseJson => {
         console.log('pm hex: ' + responseJson)
-        this.setState({ pmHex: responseJson.payload_hex });
+        var resPayloadHex = responseJson.payload_hex
+        var hexSlice = resPayloadHex.slice(2,4);
+
+        this.setState({ pmHex: hexSlice });
         this.convertPmHexToDec()
       })
       .catch(error => {
